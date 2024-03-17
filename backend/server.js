@@ -2,6 +2,8 @@ import express from "express";
 import db from "./db/connect.js";
 import morgan from "morgan";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 import { authorize } from "./middleware/authorize.js";
 import userRoutes from "./routes/user/userRoutes.js";
 import teamRoutes from "./routes/team/teamRoutes.js";
@@ -27,6 +29,10 @@ app.use("/api/plan_pro", teamRoutes);
 app.use("/api/plan_pro", boardRoutes);
 app.use("/api/plan_pro", columnRoutes);
 app.use("/api/plan_pro", taskRoutes);
+
+const secret = process.env.JWT_SECRET;
+console.log(secret);
+console.log("secret");
 
 app.listen(5000, () => {
   console.log("App running on port 5000");

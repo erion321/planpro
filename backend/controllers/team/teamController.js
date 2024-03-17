@@ -3,14 +3,14 @@ import jwt from "jsonwebtoken";
 import { jwtDecode } from "jwt-decode";
 
 export const getTeams = async (req, res) => {
-
   const token = req.headers.authorization.split("Bearer ")[1];
 
+  console.log(process.env.JWT_SECRET);
   const user = jwt.verify(token, process.env.JWT_SECRET);
-
   const { rows } = await db.query("SELECT * from teams where user_id = $1", [
     user.id,
   ]);
+  console.log("first");
 
   res.status(200).json(rows);
 };
