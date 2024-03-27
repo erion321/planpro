@@ -76,6 +76,7 @@ const authSlice = createSlice({
       return localStorage.setItem("token", action.payload.token);
     });
     builder.addCase(loginUser.rejected, (state, action) => {
+      console.log(action.payload.message);
       state.error = action.payload.message;
     });
   },

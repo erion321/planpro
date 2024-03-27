@@ -17,7 +17,8 @@ CREATE TABLE users (
     id serial primary key not null,
     name varchar(50) not null,
     email varchar(50) not null,
-    password varchar(100) not null
+    password varchar(100) not null,
+    invitations json[]
 );
 
 CREATE TABLE teams (
@@ -45,22 +46,33 @@ CREATE TABLE tasks (
     user_id bigint,
     name varchar(50),
     description varchar(200),
-    assignedTo json[]
+    assignedTo text[]
 );
 
 CREATE TABLE selectedTeam (
   user_id text,
-  team_id text PRIMARY KEY
+  team_id text 
 );
 
 CREATE TABLE selectedBoard (
   user_id text,
-  board_id text PRIMARY KEY
+  team_id text,
+  board_id text 
 );
 
 CREATE TABLE selectedTask (
+  task_id text,
   user_id text,
-  column_id text PRIMARY KEY
+  column_id text 
 );
 
 
+CREATE TABLE invitations (
+  userId bigint,
+  teamName text,
+  invitor text,
+  teamId text,
+  members text[]
+);
+
+ALTER TABLE users DROP COLUMN invitations

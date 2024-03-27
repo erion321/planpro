@@ -24,23 +24,16 @@ export const getTasks = async (req, res) => {
     user_id,
   ]);
 
-  console.log(rows);
-
   res.status(200).json(rows);
 };
 
 export const createTask = async (req, res) => {
-  const token = req.headers.authorization.split("Bearer ")[1];
-
-  if (!token) {
-    return res.json([]);
-  }
-  const decoded = jwtDecode(token);
-  const user_id = decoded.id;
+  const { id } = req.headers.authorization;
+  const { task, column_id } = req.body;
 
   const { rows } = await db.query(
-    "INSERT INTO tasks (column_id, user_id, name) values ($1, $2, $3) returning *",
-    [req.body.column_id, user_id, req.body.name]
+    "INSERT INTO tasks (column_id, user_id, name, description, assignedTo) values ($1, $2, $3, $4, $5) returning *",
+    [column_id, id, task.name, task.description, task.assignTo]
   );
 
   res.status(200).json(rows[0]);
@@ -61,7 +54,7 @@ export const selectTask = async (req, res) => {
     const { id } = req.body;
     //Delete previous row from openedTeam
     await db.query("DELETE FROM selectedTask where user_id = $1", [user_id]);
-
+    console.log(req.body);
     //Insert new team_id from the request body to openedTeam
     await db.query(
       "INSERT into selectedTask (task_id, user_id) values($1, $2)",
@@ -81,17 +74,16 @@ export const selectTask = async (req, res) => {
     );
 
     if (data.rows.length == 0) {
-      return res.json([]);
+      return res.json({});
     }
 
     //Select the team using openedTeam team_id
     const { rows } = await db.query("SELECT * from tasks where id = $1", [
-      data.rows[0].team_id,
+      data.rows[0].task_id,
     ]);
 
     //Set selectedBoard to the team we get from line above
     selectedTask = rows[0];
   }
-  console.log(selectedTask);
   res.status(200).json(selectedTask);
 };

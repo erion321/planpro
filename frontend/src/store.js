@@ -4,6 +4,7 @@ import teamReducer from "./features/teams/teamSlice";
 import boardReducer from "./features/boards/boardSlice";
 import columnReducer from "./features/columns/columnSlice";
 import taskReducer from "./features/tasks/taskSlice";
+import inviteReducer from "./features/invite/inviteSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     boards: boardReducer,
     columns: columnReducer,
     tasks: taskReducer,
+    invite: inviteReducer,
   },
 });
 

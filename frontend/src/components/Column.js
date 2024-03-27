@@ -16,14 +16,10 @@ export default function Column() {
     e.preventDefault();
     dispatch(createColumns(column));
   };
-
+ {selectBoard && console.log(selectedBoard);}
   useEffect(() => {
     dispatch(getColumns());
   }, [selectedBoard]);
-
-  useEffect(() => {
-    dispatch(selectBoard());
-  }, []);
 
   return (
     <div className="flex">

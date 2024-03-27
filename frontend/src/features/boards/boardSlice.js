@@ -11,11 +11,12 @@ export const selectBoard = createAsyncThunk(
   async (id, thunkAPI) => {
     const {
       auth: { token },
+      teams: { selectedTeam },
     } = thunkAPI.getState();
 
     const response = await axios.post(
       "http://localhost:5000/api/plan_pro/selectBoard",
-      { id },
+      { boardId: id, selectedTeam },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -48,11 +49,24 @@ export const getBoards = createAsyncThunk(
 export const createBoard = createAsyncThunk(
   "boards/createBoard",
   async (board, thunkAPI) => {
-    const response = await axios.post(
-      `http://localhost:5000/api/plan_pro/boards`,
-      board
-    );
-    return response.data;
+    try {
+      const {
+        auth: { token },
+        teams: { selectedTeam },
+      } = thunkAPI.getState();
+      const response = await axios.post(
+        `http://localhost:5000/api/plan_pro/boards`,
+        { board, selectedTeam },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      thunkAPI.rejectWithValue(error.message);
+    }
   }
 );
 
@@ -77,12 +91,14 @@ const boardSlice = createSlice({
     builder.addCase(createBoard.pending, () => {});
     builder.addCase(createBoard.fulfilled, (state, action) => {
       state.boards = [...state.boards, action.payload];
+      state.selectedBoard = action.payload;
     });
     builder.addCase(createBoard.rejected, () => {});
 
     //OPEN TEAM
     builder.addCase(selectBoard.pending, () => {});
     builder.addCase(selectBoard.fulfilled, (state, action) => {
+      console.log(action.payload);
       state.selectedBoard = action.payload;
     });
     builder.addCase(selectBoard.rejected, () => {});

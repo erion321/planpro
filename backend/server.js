@@ -10,6 +10,8 @@ import teamRoutes from "./routes/team/teamRoutes.js";
 import boardRoutes from "./routes/board/boardRoutes.js";
 import columnRoutes from "./routes/column/columnRoutes.js";
 import taskRoutes from "./routes/task/taskRoutes.js";
+import inviteRoutes from "./routes/invite/inviteRoutes.js";
+
 const app = express();
 
 const corsOptions = {
@@ -29,10 +31,7 @@ app.use("/api/plan_pro", teamRoutes);
 app.use("/api/plan_pro", boardRoutes);
 app.use("/api/plan_pro", columnRoutes);
 app.use("/api/plan_pro", taskRoutes);
-
-const secret = process.env.JWT_SECRET;
-console.log(secret);
-console.log("secret");
+app.use("/api/plan_pro", inviteRoutes);
 
 app.listen(5000, () => {
   console.log("App running on port 5000");

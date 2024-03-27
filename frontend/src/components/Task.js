@@ -1,42 +1,39 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createTask, getTasks, selectTask } from "../features/tasks/taskSlice";
+import TaskModal from "./TaskModal";
 
 export default function Task({ columnId }) {
-  const [task, setTask] = useState("");
+  const [createTaskModal, setCreateTaskModal] = useState(false);
+  const [openTask, setOpenTask] = useState(false);
 
-  const { tasks } = useSelector((state) => state.tasks);
+  const { tasks, selectedTask } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const taskData = { name: task, column_id: columnId };
-    dispatch(createTask(taskData));
+    setCreateTaskModal(true);
   };
-
-  console.log(columnId);
 
   useEffect(() => {
     dispatch(getTasks());
+    dispatch(selectTask());
   }, []);
 
   return (
-    <div className="b border-r border-t p-2">
-      <form className="flex gap-4">
-        <input
-          className="border rounded-md  px-1 py-0.5"
-          type="text"
-          placeholder="Task Name"
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
+    <div className="border-r border-t p-2">
+      <button onClick={handleSubmit}>Create Task</button>
+      {createTaskModal && (
+        <TaskModal
+          setCreateTaskModal={setCreateTaskModal}
+          columnId={columnId}
         />
-        <button onClick={handleSubmit}>Create Task</button>
-      </form>
+      )}
       <div>
         {tasks &&
           tasks.map((task, index) => {
             const { id, column_id } = task;
-            console.log({ column_id, columnId });
+
             if (columnId === column_id) {
               return (
                 <h1 key={index} onClick={() => dispatch(selectTask(id))}>
@@ -46,6 +43,20 @@ export default function Task({ columnId }) {
             }
           })}
       </div>
+      {/*   {selectedTask && (
+        <div className="absolute  bg-red-400 bg-opacity-50 top-0 left-0 w-full h-full grid place-content-center">
+          <div className="relative bg-white flex flex-col gap-4 p-10 rounded-md">
+            <h2>{selectedTask.name}</h2>
+            <p>{selectedTask.description}</p>
+            <div>
+              {selectedTask.assignedto.map((member) => {
+                const parseMember = JSON.parse(member);
+                return <h2>{parseMember.name}</h2>;
+              })}
+            </div>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 }

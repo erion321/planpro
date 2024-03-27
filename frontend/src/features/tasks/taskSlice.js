@@ -47,14 +47,14 @@ export const getTasks = createAsyncThunk(
 
 export const createTask = createAsyncThunk(
   "tasks/createTask",
-  async (task, thunkAPI) => {
+  async (createTaskData, thunkAPI) => {
     const {
       auth: { token },
     } = thunkAPI.getState();
 
     const response = await axios.post(
       `http://localhost:5000/api/plan_pro/tasks`,
-      task,
+      createTaskData,
       {
         headers: {
           Authorization: `Bearer ${token}`,

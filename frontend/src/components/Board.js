@@ -15,16 +15,16 @@ export default function Board() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const boardData = { name: board, team_id: selectedTeam.id };
-    dispatch(createBoard(boardData));
+    dispatch(createBoard(board));
   };
 
   useEffect(() => {
     dispatch(getBoards());
+    dispatch(selectBoard());
   }, [selectedTeam]);
 
   return (
-    <div className="b border-r border-t p-2">
+    <div className="border-r border-t p-2">
       <form className="flex gap-4">
         <input
           className="border rounded-md  px-1 py-0.5"
