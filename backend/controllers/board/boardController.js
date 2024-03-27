@@ -3,17 +3,11 @@ import jwt from "jsonwebtoken";
 import { jwtDecode } from "jwt-decode";
 
 export const getBoards = async (req, res) => {
-  const token = req.headers.authorization.split("Bearer ")[1];
-
-  if (!token) {
-    return res.json([]);
-  }
-  const decoded = jwtDecode(token);
-  const user_id = decoded.id;
+  const { id } = req.headers.authorization;
 
   const selectedTeam = await db.query(
     "SELECT * from selectedTeam where user_id = $1",
-    [user_id]
+    [id]
   );
 
   if (selectedTeam.rows.length == 0) {
@@ -50,13 +44,7 @@ export const createBoard = async (req, res) => {
 };
 
 export const selectBoard = async (req, res) => {
-  if (!req.headers.authorization.split("Bearer ")[1]) {
-    return res.json([]);
-  }
-  
-  const token = req.headers.authorization.split("Bearer ")[1];
-  const decoded = jwtDecode(token);
-  const user_id = decoded.id;
+  const { id } = req.headers.authorization;
 
   const { boardId, selectedTeam } = req.body;
   console.log(selectedTeam);
@@ -67,13 +55,13 @@ export const selectBoard = async (req, res) => {
     //Delete previous row from openedTeam
     await db.query(
       "DELETE FROM selectedBoard where user_id = $1 and team_id = $2",
-      [user_id, selectedTeam.id]
+      [id, selectedTeam.id]
     );
 
     //Insert new team_id from the request body to openedTeam
     await db.query(
       "INSERT into selectedBoard (user_id, team_id, board_id ) values($1, $2, $3)",
-      [user_id, selectedTeam.id, boardId]
+      [id, selectedTeam.id, boardId]
     );
 
     //Select team using openedTeam id
@@ -90,7 +78,7 @@ export const selectBoard = async (req, res) => {
     //If we dont have the id eg. user just refreshes the page
     const data = await db.query(
       "SELECT * from selectedBoard where user_id = $1 and team_id = $2",
-      [user_id, selectedTeam.id]
+      [id, selectedTeam.id]
     );
 
     if (data.rows.length == 0) {

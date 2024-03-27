@@ -37,42 +37,42 @@ export const createTeam = async (req, res) => {
 };
 
 export const selectTeam = async (req, res) => {
-  if (!req.headers.authorization.split("Bearer ")[1]) {
-    return res.json([]);
-  }
-  const token = req.headers.authorization.split("Bearer ")[1];
-  const decoded = jwtDecode(token);
-  const user_id = decoded.id;
-
+  console.log("first");
+  const { id } = req.headers.authorization;
+  console.log("222222222222",id);
   let selectedTeam;
 
-  if (req.body.id) {
-    const { id } = req.body;
+  if (req.body.teamId) {
+    const { teamId } = req.body;
+    console.log(teamId);
     //Delete previous row from openedTeam
-    await db.query("DELETE FROM selectedTeam where user_id = $1", [user_id]);
+    await db.query("DELETE FROM selectedTeam where user_id = $1", [id]);
 
     //Insert new team_id from the request body to openedTeam
     await db.query(
       "INSERT into selectedTeam (team_id, user_id) values($1, $2)",
-      [id, user_id]
+      [teamId, id]
     );
 
     //Select team using openedTeam id
-    const { rows } = await db.query("SELECT * from teams where id = $1", [id]);
+    const { rows } = await db.query("SELECT * from teams where id = $1", [
+      teamId,
+    ]);
 
     //Set openedTeam to the team we get from line above
     selectedTeam = rows[0];
   } else {
     //If we dont have the id eg. user just refreshes the page
+    console.log("else");
     const data = await db.query(
       "SELECT * from selectedTeam where user_id = $1",
-      [user_id]
+      [id]
     );
 
     if (data.rows.length == 0) {
       return res.json([]);
     }
-
+    console.log("111111111", data.rows[0].team_id);
     //Select the team using openedTeam team_id
     const { rows } = await db.query("SELECT * from teams where id = $1", [
       data.rows[0].team_id,
@@ -81,6 +81,7 @@ export const selectTeam = async (req, res) => {
     //Set openedTeam to the team we get from line above
     selectedTeam = rows[0];
   }
+  console.log(selectedTeam);
   res.status(200).json(selectedTeam);
 };
 

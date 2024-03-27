@@ -8,14 +8,14 @@ const initialState = {
 
 export const selectTeam = createAsyncThunk(
   "teams/selectTeam",
-  async (id, thunkAPI) => {
+  async (teamId, thunkAPI) => {
     const {
       auth: { token },
     } = thunkAPI.getState();
 
     const response = await axios.post(
       "http://localhost:5000/api/plan_pro/selectTeam",
-      { id },
+      { teamId },
       {
         headers: {
           Authorization: `Bearer ${token}`,
